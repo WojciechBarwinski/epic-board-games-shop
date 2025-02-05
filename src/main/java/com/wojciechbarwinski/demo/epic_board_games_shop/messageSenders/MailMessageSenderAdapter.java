@@ -20,21 +20,20 @@ public class MailMessageSenderAdapter implements MessageSenderPort{
     private final JavaMailSender mailSender;
 
     @Override
-    public void sendSimpleMessageAfterOrderWasConfirmed(Order order) {
+    public void sendOrderConfirmationWithPaymentUrl(Order order, String paymentUrl) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(shopMail);
         message.setTo(order.getOrdererMail());
         message.setSubject("Epic Board Game Shop - Order");
-        message.setText(generateMailText(order.getId()));
+        message.setText(generateMailTextWithUrls(order.getId(), paymentUrl));
         mailSender.send(message);
     }
 
-    private String generateMailText(Long id) {
-        String linkToPay = shopOrderLink + id + "/payment";
+    private String generateMailTextWithUrls(Long id, String paymentUrl) {
         String linkToCancel = shopOrderLink + id + "/cancel";
 
         return "Thank you for placing your order. Here are some useful links:\n\n" +
-                "1. To pay for your order, click here: " + linkToPay + "\n" +
+                "1. To pay for your order, click here: " + paymentUrl + "\n" +
                 "2. To cancel your order, click here: " + linkToCancel + "\n\n" +
                 "Best regards,\nThe Epic Board Games Shop Team";
     }

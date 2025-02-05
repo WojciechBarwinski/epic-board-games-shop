@@ -5,6 +5,8 @@ import com.wojciechbarwinski.demo.epic_board_games_shop.entities.Order;
 import com.wojciechbarwinski.demo.epic_board_games_shop.entities.OrderStatus;
 import com.wojciechbarwinski.demo.epic_board_games_shop.mappers.MapperFacade;
 import com.wojciechbarwinski.demo.epic_board_games_shop.messageSenders.MessageSenderPort;
+import com.wojciechbarwinski.demo.epic_board_games_shop.payments.PaymentService;
+import com.wojciechbarwinski.demo.epic_board_games_shop.payments.PaymentDataDTO;
 import com.wojciechbarwinski.demo.epic_board_games_shop.repositories.OrderRepository;
 import com.wojciechbarwinski.demo.epic_board_games_shop.validations.OrderStatusChangeValidation;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ class OrderProceedAfterConfirmService {
     private final OrderHelper orderHelper;
     private final MessageSenderPort messageSenderPort;
     private final OrderStatusChangeValidation orderStatusChangeValidation;
+    private final PaymentService paymentService;
 
     OrderResponseDTO proceedOrderAfterConfirm(Long id) {
         Order order = orderHelper.getOrderById(id);
@@ -29,7 +32,9 @@ class OrderProceedAfterConfirmService {
         orderStatusChangeValidation.assertOrderStatusTransitionIsAllowed(order.getOrderStatus(), OrderStatus.CONFIRMED);
         order.setOrderStatus(OrderStatus.CONFIRMED);
         log.info("Order with id {} was confirm", order.getId());
-        messageSenderPort.sendSimpleMessageAfterOrderWasConfirmed(order);
+        PaymentDataDTO payUOrder = paymentService.createOrderPayment(order);
+        //TODO -> Dodać do ORDER pole payU ID [ES-018] i dopisywać je do order
+        messageSenderPort.sendOrderConfirmationWithPaymentUrl(order, payUOrder.getRedirectUri());
 
         orderRepository.save(order);
         return mapper.mapOrderToOrderResponseDTO(order);

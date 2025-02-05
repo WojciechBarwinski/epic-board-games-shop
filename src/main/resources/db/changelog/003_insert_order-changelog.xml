@@ -24,7 +24,7 @@
 
         <!-- Order 1 -->
         <insert tableName="orders">
-            <column name="total_price" value="585.52"/>
+            <column name="total_price" value="585.50"/>
             <column name="orderer_mail" value="klient1@example.com"/>
             <column name="employee_id" value="owner@mail.com"/>
             <column name="address" value="1"/>

@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/payU/**").permitAll()
                         .requestMatchers("/order/{hashId}/cancel").permitAll()
                         .requestMatchers("/order/{hashId}/payment").permitAll()
                         .requestMatchers("/order/shipment").permitAll()

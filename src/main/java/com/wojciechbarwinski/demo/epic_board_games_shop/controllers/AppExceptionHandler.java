@@ -75,4 +75,11 @@ public class AppExceptionHandler {
 
         return new ErrorResponse<>(exception.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(OrderStatusChangeException.class)
+    public ErrorResponse<String> orderStatusChangeException(OrderStatusChangeException exception) {
+
+        return new ErrorResponse<>(exception.getMessage());
+    }
 }
